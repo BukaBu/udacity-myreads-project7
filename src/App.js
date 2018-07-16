@@ -1,25 +1,92 @@
-import React from 'react'
-import * as BooksAPI from './BooksAPI'
-import SearchBooks from './Components/SearchBooks'
-import ListBooks from './Components/ListBooks'
-import Book from './Components/Book'
-import './App.css'
+import React, {Component} from 'react';
+import {Switch, Route} from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
+import ListBooks from './components/ListBooks';
+import SearchBooks from './components/SearchBooks';
+import './App.css';
 
-class BooksApp extends React.Component {
+class BooksApp extends Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+    books: [],
+    filteredBooks: []
+  }
+
+  // gets all the books using BooksAPI getAll method
+  componentDidMount() {
+    BooksAPI.getAll().then(books => {
+      this.setState({ books });
+    });
+  }
+
+  // search books using BooksAPI search method
+  searchBooks = (query) => {
+    if (query) {
+      BooksAPI.search(query).then((result) => {
+          this.updateSearchedResult(result)
+          if (result.error !== 'empty query') {
+            this.setState({filteredBooks: result})
+          } else {
+            this.setState({filteredBooks: []})
+          }
+        })
+    } else {
+      this.setState({filteredBooks: []})
+    }
+  }
+
+  //change the shelf of the book using BooksAPI update method
+  updateShelf = (book, shelf) => {
+  
+    BooksAPI.update(book, shelf).then(() => (
+      BooksAPI.getAll().then((books) => {
+        this.setState({ books })
+        this.updateSearchedResult(this.state.filteredBooks)
+      })))
+  }
+
+  // update state of the book
+  updateSearchedResult = (values) => {
+   
+    for (let value of values) {
+      for (let book of this.state.books) {
+        if (value.id === book.id) {
+          value.shelf = book.shelf
+        }
+      }
+    }
+    this.setState({filteredBooks: values})
   }
 
   render() {
     return (
       <div className="app">
-        
+
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <ListBooks
+                books={this.state.books}
+                updateOption={(book, shelf) => this.updateShelf(book, shelf)}
+              />
+            )}
+          />
+
+          <Route
+            path="/search"
+            render={() => (
+              <div >
+                <SearchBooks
+                  filteredBooks={this.state.filteredBooks}
+                  searchBooks={(query) => this.searchBooks(query)}
+                  updateOption={(book, shelf) => this.updateShelf(book, shelf)}
+                />
+              </div>
+            )}
+          />
+
+        </Switch>
       </div>
     )
   }
