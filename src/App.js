@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Switch, Route} from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
-import ListBooks from './components/ListBooks';
-import SearchBooks from './components/SearchBooks';
+import ListBooks from './Components/ListBooks';
+import SearchBooks from './Components/SearchBooks';
 import './App.css';
 
-class BooksApp extends Component {
+class BooksApp extends React.Component {
   state = {
     books: [],
     filteredBooks: []
@@ -44,9 +44,7 @@ class BooksApp extends Component {
       })))
   }
 
-  // update state of the book
   updateSearchedResult = (values) => {
-   
     for (let value of values) {
       for (let book of this.state.books) {
         if (value.id === book.id) {
@@ -85,6 +83,16 @@ class BooksApp extends Component {
               </div>
             )}
           />
+
+           <Route
+            component={function NoMatch() {
+            return (
+              <div className="errorPage">
+                <h1>404</h1>
+                <h3>Page not Found</h3>
+              </div>
+            )
+          }}/>
 
         </Switch>
       </div>
