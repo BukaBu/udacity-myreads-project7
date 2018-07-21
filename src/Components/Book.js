@@ -4,7 +4,7 @@ class Book extends React.Component {
 
   render() {
     const {book, updateOption} = this.props;
-    let shelfValue = (book.shelf) ? book.shelf : 'move';
+    let shelfValue = (book.shelf) ? book.shelf : 'none';
 
     return (
       <li>
@@ -12,15 +12,13 @@ class Book extends React.Component {
           <div className="book-top">
             {book.imageLinks && (
               <div
-                className="book-cover"
-                style={{
-                width: 130,
-                height: 190,
-                backgroundImage: `url(${book.imageLinks.thumbnail})`
-                }} 
-              />
-             
-            )}
+              className="book-cover"
+              style={{
+              width: 128,
+              height: 193,
+              backgroundImage: `url(${book.imageLinks.thumbnail})`
+            }}></div>
+          )}
             <div className="book-shelf-changer">
               <select
                 value={shelfValue}

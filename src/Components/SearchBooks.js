@@ -24,15 +24,17 @@ class SearchBooks extends React.Component {
 
         <div className="search-books-results">
           <ol className="books-grid">
-            {filteredBooks.map(book => (
+            {
+              
+              filteredBooks.map(book => (
               <Book 
-              book={book} key={book.id} updateOption={updateOption}
-              />))
+              book={book} key={book.id} updateOption={updateOption} 
+            />))
             }
           </ol>
         </div>
-
       </div>
+      
     )
   }
 }
